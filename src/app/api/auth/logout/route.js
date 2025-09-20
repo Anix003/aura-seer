@@ -1,8 +1,9 @@
+import { NextResponse } from 'next/server';
 import { clearAuthCookie } from '@/lib/auth';
 
 export async function POST(request) {
   try {
-    const response = Response.json(
+    const response = NextResponse.json(
       { message: 'Logout successful' },
       { status: 200 }
     );
@@ -11,7 +12,7 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Logout error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error during logout' },
       { status: 500 }
     );

@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import { hashPassword, generateToken, setAuthCookie } from '@/lib/auth';
@@ -9,7 +10,7 @@ export async function POST(request) {
     const { name, email, password, role, specialization } = await request.json();
 
     if (!name || !email || !password || !role) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Name, email, password, and role are required' },
         { status: 400 }
       );
@@ -17,14 +18,14 @@ export async function POST(request) {
 
     const validRoles = ['doctor', 'clinician', 'patient'];
     if (!validRoles.includes(role)) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Role must be doctor, clinician, or patient' },
         { status: 400 }
       );
     }
 
     if ((role === 'doctor' || role === 'clinician') && !specialization) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Specialization is required for doctors and clinicians' },
         { status: 400 }
       );
@@ -32,7 +33,7 @@ export async function POST(request) {
 
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'User already exists with this email' },
         { status: 409 }
       );
@@ -60,7 +61,7 @@ export async function POST(request) {
       name: user.name
     });
 
-    const response = Response.json(
+    const response = NextResponse.json(
       {
         message: 'User created successfully',
         user: {
@@ -81,20 +82,20 @@ export async function POST(request) {
 
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(err => err.message);
-      return Response.json(
+      return NextResponse.json(
         { error: validationErrors.join(', ') },
         { status: 400 }
       );
     }
 
     if (error.code === 11000) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'User already exists with this email' },
         { status: 409 }
       );
     }
 
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error during signup' },
       { status: 500 }
     );
