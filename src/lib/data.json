@@ -1,0 +1,44 @@
+[
+  {
+    "primaryDiagnosis": {
+      "condition": "Left Pneumonia",
+      "stage": "early",
+      "confidence": 0.95,
+      "evidenceMarkers": [
+        "Increased opacity in the left lung field.",
+        "Possible consolidation/infiltrate noted on the left side.",
+        "Right lung appears relatively clear."
+      ]
+    },
+    "riskAssessment": {
+      "severity": "moderate",
+      "urgency": "urgent",
+      "progressionRisk": "moderate"
+    },
+    "predictiveAnalytics": {
+      "expectedProgression": "The left lung opacity may worsen without treatment, potentially leading to respiratory compromise. The pneumonia could resolve spontaneously with antibiotics and supportive care, but the severity will influence this.",
+      "timeframe": "Within 1-2 weeks if untreated; potential improvement within a week with appropriate therapy.",
+      "monitoringRecommendations": "Monitor symptoms (cough, fever, shortness of breath) closely. Repeat chest X-ray in 3-7 days to assess response to treatment."
+    },
+    "clinicalRecommendations": {
+      "immediateActions": "Initiate antibiotic therapy based on local guidelines for community-acquired pneumonia.",
+      "diagnosticWorkup": "Sputum culture and sensitivity (if possible).",
+      "treatmentConsiderations": "Supportive care including oxygen if needed, hydration, and rest. Consider bronchodilators if wheezing is present.",
+      "specialistReferral": "Consult with a pulmonologist or infectious disease specialist."
+    },
+    "dataFusionInsights": {
+      "imagingFindings": "Significant opacity in the left lung field, likely representing consolidation/infiltrate. Pleural effusion is not evident on this single view.",
+      "clinicalCorrelation": "The patient's symptoms (cough, fever) align with a possible pneumonia diagnosis. The chest X-ray findings support this suspicion.",
+      "differentialDiagnosis": [
+        "Viral pneumonia",
+        "Atypical pneumonia (Mycoplasma, Chlamydia)",
+        "Bronchitis"
+      ]
+    },
+    "qualityMetrics": {
+      "imageQuality": "The image quality is adequate for initial assessment. However, a lateral decubitus view may be helpful to assess for pleural effusion.",
+      "diagnosticLimitations": "A single PA radiograph cannot definitively rule out other conditions. Further evaluation with additional imaging modalities (e.g., CT scan) might be considered if the patient does not respond to treatment or presents with atypical features.",
+      "recommendedImaging": "Consider a lateral decubitus chest X-ray to assess for pleural effusion."
+    }
+  }
+]
