@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/contexts/QueryProvider";
 import { MedicalProvider } from "@/contexts/MedicalContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -26,10 +27,12 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
-          <MedicalProvider>
-            {children}
-            <Toaster />
-          </MedicalProvider>
+          <AuthProvider>
+            <MedicalProvider>
+              {children}
+              <Toaster />
+            </MedicalProvider>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

@@ -5,7 +5,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowRight, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -17,6 +17,7 @@ export default function LoginPage() {
     password: "",
   });
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,23 +27,40 @@ export default function LoginPage() {
     }));
   };
 
+  const validateForm = () => {
+    if (!formData.email || !formData.password) {
+      const toast = require("sonner");
+      toast.toast.error("Please fill in all fields");
+      return false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      const toast = require("sonner");
+      toast.toast.error("Please enter a valid email address");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.email || !formData.password) {
-      toast.error("Please fill in all fields");
+    if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
     
-    // Simulate login process
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      toast.success("Login successful! Welcome back.");
-      router.push("/");
+      const result = await login(formData.email, formData.password);
+      if (result.success) {
+        router.push("/");
+      }
     } catch (error) {
-      toast.error("Login failed. Please try again.");
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }
