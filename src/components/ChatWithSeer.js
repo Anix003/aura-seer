@@ -264,7 +264,7 @@ Is there anything specific about your diagnosis you'd like me to explain further
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="bg-white rounded-xl shadow-2xl w-full max-w-md h-[600px] flex flex-col overflow-hidden"
+              className="bg-white rounded-xl shadow-2xl w-full lg:max-w-lg md:max-w-md h-[600px] flex flex-col overflow-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}

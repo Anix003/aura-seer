@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Brain, Scan, AlertCircle } from "lucide-react";
+import { Brain, Scan, AlertCircle, LogOut, User } from "lucide-react";
 import { useMedical } from "@/contexts/MedicalContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAnalyzeImage } from "@/hooks/useMedicalQueries";
 import { MEDICAL_CONSTANTS, MOCK_DATA } from "@/lib/constants";
 import { generateProgressionData } from "@/lib/medicalUtils";
@@ -14,6 +15,7 @@ import TelemedicineButton from "@/components/TelemedicineButton";
 import AnalysisHistory from "@/components/AnalysisHistory";
 import Loading from "@/components/Loading";
 import Error from "@/components/Error";
+import Link from "next/link";
 
 export default function Home() {
   const { 
@@ -23,6 +25,7 @@ export default function Home() {
     setAnalysisResult 
   } = useMedical();
   
+  const { user, logout } = useAuth();
   const [error, setError] = useState(null);
 
   // Use the modularized React Query hook
@@ -73,10 +76,36 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              {/* <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
                 System Online
-              </span>
+              </span> */}
+              {user ? (
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 bg-blue-50 px-3 py-2 rounded-full">
+                    <User className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-700">
+                      {user.name}
+                    </span>
+                    <span className="text-xs text-blue-500 capitalize">
+                      ({user.role})
+                    </span>
+                  </div>
+                  <button
+                    onClick={logout}
+                    className="flex items-center space-x-1 bg-red-100 hover:bg-red-200 text-red-700 py-2 px-3 rounded-full transition-all duration-200 ease-in-out"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span className="text-sm">Logout</span>
+                  </button>
+                </div>
+              ) : (
+                <Link href="/login">
+                  <button className="flex items-center bg-blue-100 hover:bg-blue-400 hover:text-white py-2 px-4 rounded-full transition-all duration-200 ease-in-out">
+                    Log In
+                  </button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
