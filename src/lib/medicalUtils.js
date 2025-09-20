@@ -78,7 +78,8 @@ export function formatFileSize(bytes) {
 export function generateProgressionData(analysisResult, baseData) {
   if (!analysisResult) return baseData;
   
-  const updatedData = [...baseData];
+  // Create a deep copy of the base data to avoid mutating the original
+  const updatedData = baseData.map(entry => ({ ...entry }));
   const lastEntry = updatedData[updatedData.length - 1];
   
   // Update last entry with current analysis confidence
