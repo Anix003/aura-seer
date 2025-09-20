@@ -14,6 +14,7 @@ import TelemedicineButton from "@/components/TelemedicineButton";
 import AnalysisHistory from "@/components/AnalysisHistory";
 import Loading from "@/components/Loading";
 import Error from "@/components/Error";
+import Link from "next/link";
 
 export default function Home() {
   const { 
@@ -77,7 +78,11 @@ export default function Home() {
                 <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
                 System Online
               </span> */}
-              <button className="flex items-center bg-blue-100 hover:bg-blue-400 hover:text-white py-2 px-4 rounded-full transition-all duration-200 ease-in-out">Log In</button>
+              <Link href="/login">
+                <button className="flex items-center bg-blue-100 hover:bg-blue-400 hover:text-white py-2 px-4 rounded-full transition-all duration-200 ease-in-out">
+                  Log In
+                </button>
+              </Link>
             </div>
           </div>
         </div>
