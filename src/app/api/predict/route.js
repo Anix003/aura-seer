@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import AnalysisResult from '@/models/AnalysisResult';
 import User from '@/models/User';
@@ -10,7 +11,7 @@ export async function POST(request) {
 
     const userFromToken = await getUserFromCookies();
     if (!userFromToken) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
@@ -18,14 +19,14 @@ export async function POST(request) {
 
     const user = await User.findById(userFromToken.userId);
     if (!user) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
       );
     }
 
     if (user.role !== 'patient') {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Only patients can submit analysis requests' },
         { status: 403 }
       );
@@ -37,14 +38,14 @@ export async function POST(request) {
     const imageType = formData.get("imageType") || "X-ray";
 
     if (!symptoms || symptoms.trim() === '') {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Symptoms description is required' },
         { status: 400 }
       );
     }
 
     if (!image) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Medical image is required' },
         { status: 400 }
       );
@@ -76,7 +77,7 @@ export async function POST(request) {
 
     await analysisResult.populate('userId', 'name email role');
 
-    return Response.json({
+    return NextResponse.json({
       id: analysisResult._id,
       diagnosis: analysisResult.aiOutput.diagnosis,
       confidence: analysisResult.aiOutput.confidence,
@@ -96,13 +97,13 @@ export async function POST(request) {
 
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(err => err.message);
-      return Response.json(
+      return NextResponse.json(
         { error: validationErrors.join(', ') },
         { status: 400 }
       );
     }
 
-    return Response.json(
+    return NextResponse.json(
       { error: "Internal server error during image analysis" },
       { status: 500 }
     );

@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Chat from '@/models/Chat';
 import User from '@/models/User';
@@ -9,7 +10,7 @@ export async function GET(request, { params }) {
 
     const userFromToken = await getUserFromCookies();
     if (!userFromToken) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
@@ -19,7 +20,7 @@ export async function GET(request, { params }) {
 
     const [patientId, doctorId] = roomId.split('_');
     if (userFromToken.userId !== patientId && userFromToken.userId !== doctorId) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Access denied to this chat room' },
         { status: 403 }
       );
@@ -31,7 +32,7 @@ export async function GET(request, { params }) {
       .sort({ timestamp: 1 })
       .limit(100);
 
-    return Response.json({
+    return NextResponse.json({
       roomId,
       messages: messages.map(msg => ({
         id: msg._id,
@@ -53,7 +54,7 @@ export async function GET(request, { params }) {
 
   } catch (error) {
     console.error('Get chat messages error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
@@ -66,7 +67,7 @@ export async function POST(request, { params }) {
 
     const userFromToken = await getUserFromCookies();
     if (!userFromToken) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
@@ -76,7 +77,7 @@ export async function POST(request, { params }) {
     const { message } = await request.json();
 
     if (!message || message.trim() === '') {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Message is required' },
         { status: 400 }
       );
@@ -84,7 +85,7 @@ export async function POST(request, { params }) {
 
     const [patientId, doctorId] = roomId.split('_');
     if (userFromToken.userId !== patientId && userFromToken.userId !== doctorId) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Access denied to this chat room' },
         { status: 403 }
       );
@@ -104,7 +105,7 @@ export async function POST(request, { params }) {
     await chatMessage.populate('senderId', 'name role');
     await chatMessage.populate('receiverId', 'name role');
 
-    return Response.json({
+    return NextResponse.json({
       id: chatMessage._id,
       message: chatMessage.message,
       timestamp: chatMessage.timestamp,
@@ -126,13 +127,13 @@ export async function POST(request, { params }) {
 
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(err => err.message);
-      return Response.json(
+      return NextResponse.json(
         { error: validationErrors.join(', ') },
         { status: 400 }
       );
     }
 
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );

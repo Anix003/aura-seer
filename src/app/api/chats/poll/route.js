@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Chat from '@/models/Chat';
 import { getUserFromCookies } from '@/lib/auth';
@@ -8,7 +9,7 @@ export async function GET(request) {
 
     const user = await getUserFromCookies();
     if (!user) {
-      return Response.json({ error: 'Authentication required' }, { status: 401 });
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -17,12 +18,12 @@ export async function GET(request) {
     const limit = parseInt(searchParams.get('limit')) || 20;
 
     if (!roomId) {
-      return Response.json({ error: 'Room ID is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Room ID is required' }, { status: 400 });
     }
 
     const [patientId, doctorId] = roomId.split('_');
     if (user.userId !== patientId && user.userId !== doctorId) {
-      return Response.json({ error: 'Access denied to this chat room' }, { status: 403 });
+      return NextResponse.json({ error: 'Access denied to this chat room' }, { status: 403 });
     }
 
     let query = { roomId };
@@ -51,7 +52,7 @@ export async function GET(request) {
       );
     }
 
-    return Response.json({
+    return NextResponse.json({
       messages: messages.map(msg => ({
         id: msg._id,
         message: msg.message,
@@ -74,6 +75,6 @@ export async function GET(request) {
 
   } catch (error) {
     console.error('Poll messages error:', error);
-    return Response.json({ error: 'Failed to fetch messages' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
   }
 }

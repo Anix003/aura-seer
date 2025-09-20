@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import AnalysisResult from '@/models/AnalysisResult';
 import { getUserFromCookies } from '@/lib/auth';
@@ -8,7 +9,7 @@ export async function GET(request, { params }) {
 
     const userFromToken = await getUserFromCookies();
     if (!userFromToken) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
@@ -21,7 +22,7 @@ export async function GET(request, { params }) {
       .populate('doctorId', 'name email role specialization');
 
     if (!result) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Analysis result not found' },
         { status: 404 }
       );
@@ -29,14 +30,14 @@ export async function GET(request, { params }) {
 
     if (userFromToken.role === 'patient') {
       if (result.userId._id.toString() !== userFromToken.userId) {
-        return Response.json(
+        return NextResponse.json(
           { error: 'Access denied' },
           { status: 403 }
         );
       }
     }
 
-    return Response.json({
+    return NextResponse.json({
       id: result._id,
       inputMeta: result.inputMeta,
       aiOutput: result.aiOutput,
@@ -57,7 +58,7 @@ export async function GET(request, { params }) {
 
   } catch (error) {
     console.error('Get result by ID error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
@@ -70,14 +71,14 @@ export async function PUT(request, { params }) {
 
     const userFromToken = await getUserFromCookies();
     if (!userFromToken) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
 
     if (userFromToken.role !== 'doctor' && userFromToken.role !== 'clinician') {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Only doctors and clinicians can update analysis results' },
         { status: 403 }
       );
@@ -88,7 +89,7 @@ export async function PUT(request, { params }) {
 
     const validStatuses = ['pending', 'accepted', 'rejected', 'overridden'];
     if (status && !validStatuses.includes(status)) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Invalid status. Must be pending, accepted, rejected, or overridden' },
         { status: 400 }
       );
@@ -110,13 +111,13 @@ export async function PUT(request, { params }) {
       .populate('doctorId', 'name email role specialization');
 
     if (!result) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Analysis result not found' },
         { status: 404 }
       );
     }
 
-    return Response.json({
+    return NextResponse.json({
       id: result._id,
       inputMeta: result.inputMeta,
       aiOutput: result.aiOutput,
@@ -140,13 +141,13 @@ export async function PUT(request, { params }) {
 
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(err => err.message);
-      return Response.json(
+      return NextResponse.json(
         { error: validationErrors.join(', ') },
         { status: 400 }
       );
     }
 
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );

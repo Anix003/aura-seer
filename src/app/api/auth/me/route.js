@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import { getUserFromCookies } from '@/lib/auth';
@@ -8,7 +9,7 @@ export async function GET(request) {
 
     const userFromToken = await getUserFromCookies();
     if (!userFromToken) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
@@ -16,13 +17,13 @@ export async function GET(request) {
 
     const user = await User.findById(userFromToken.userId);
     if (!user) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
       );
     }
 
-    return Response.json(
+    return NextResponse.json(
       {
         user: {
           id: user._id,
@@ -39,7 +40,7 @@ export async function GET(request) {
 
   } catch (error) {
     console.error('Get user error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );

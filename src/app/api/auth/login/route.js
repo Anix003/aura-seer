@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import { comparePassword, generateToken, setAuthCookie } from '@/lib/auth';
@@ -9,7 +10,7 @@ export async function POST(request) {
     const { email, password } = await request.json();
 
     if (!email || !password) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Email and password are required' },
         { status: 400 }
       );
@@ -17,7 +18,7 @@ export async function POST(request) {
 
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       );
@@ -25,7 +26,7 @@ export async function POST(request) {
 
     const isPasswordValid = await comparePassword(password, user.passwordHash);
     if (!isPasswordValid) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       );
@@ -38,7 +39,7 @@ export async function POST(request) {
       name: user.name
     });
 
-    const response = Response.json(
+    const response = NextResponse.json(
       {
         message: 'Login successful',
         user: {
@@ -47,16 +48,18 @@ export async function POST(request) {
           email: user.email,
           role: user.role,
           specialization: user.specialization
-        }
+        },
+        token
       },
       { status: 200 }
     );
 
-    return setAuthCookie(response, token);
+    return response;
+    // return setAuthCookie(response, token);
 
   } catch (error) {
     console.error('Login error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error during login' },
       { status: 500 }
     );
