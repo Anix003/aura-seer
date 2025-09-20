@@ -16,20 +16,6 @@ export async function POST(request) {
     }
 
     const prompt = createPrompt(symptoms);
-    console.log("Generated Prompt:", prompt);
-
-    // const response = await fetch("http://localhost:11434/", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     model: "hf.co/unsloth/medgemma-4b-it-GGUF:Q4_K_M", // adjust model name as needed
-    //     prompt: prompt,
-    //     max_tokens: 1000,
-    //     temperature: 0.3,
-    //   }),
-    // });
 
       const response = await fetch("http://localhost:11434/api/generate", {
         method: "POST",
@@ -48,7 +34,6 @@ export async function POST(request) {
       throw new Error(`MedGemma API error: ${response.status}`);
     }
 
-    console.log("MedGemma Response:", medGemmaResult);
     const structuredOutput = parseResponse(medGemmaResult);
     console.log("Structured Output:", structuredOutput);
 
