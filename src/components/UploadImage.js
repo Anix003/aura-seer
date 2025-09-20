@@ -9,7 +9,7 @@ import { MEDICAL_CONSTANTS } from "@/lib/constants";
 import { validateMedicalImage, formatFileSize } from "@/lib/medicalUtils";
 
 export default function UploadImage() {
-  const { uploadedImage, setUploadedImage, symptoms, setSymptoms } = useMedical();
+  const { uploadedImage, setUploadedImage, symptoms, setSymptoms, clearImageAndResults } = useMedical();
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef(null);
@@ -62,10 +62,12 @@ export default function UploadImage() {
     if (uploadedImage?.previewUrl) {
       URL.revokeObjectURL(uploadedImage.previewUrl);
     }
-    setUploadedImage(null);
+    // Clear both image and analysis results
+    clearImageAndResults();
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    toast.success("Image removed successfully!");
   };
 
   return (

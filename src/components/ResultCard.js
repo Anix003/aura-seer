@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { getConfidenceLevel, getConfidenceColor } from "@/lib/medicalUtils";
 import InfoTooltip from "@/components/InfoTooltip";
+import ChatWithSeer from "@/components/ChatWithSeer";
 
 export default function ResultCard({ result }) {
   if (!result) return null;
@@ -45,7 +46,10 @@ export default function ResultCard({ result }) {
           <Activity className="h-5 w-5 mr-2 text-blue-600" />
           Analysis Results
         </h2>
-        {getSeverityBadge(result.confidence)}
+        <div className="flex items-center space-x-3">
+          {getSeverityBadge(result.confidence)}
+          <ChatWithSeer result={result} />
+        </div>
       </div>
 
       <div className="space-y-6">
