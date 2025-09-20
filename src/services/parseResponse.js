@@ -1,24 +1,22 @@
 export function parseResponse(medGemmaResult) {
   try {
-    const responseText = medGemmaResult.choices?.[0]?.text || 
-                        medGemmaResult.response || 
+    const responseText = medGemmaResult.choices?.[0]?.text ||
+                        medGemmaResult.response ||
                         JSON.stringify(medGemmaResult);
 
-    console.log("Raw MedGemma response:", responseText);
-
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-    
+
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
-      
+
       // Validate and structure the comprehensive medical response
       return {
         primaryDiagnosis: {
           condition: parsed.primaryDiagnosis?.condition || "Unable to determine diagnosis",
           stage: validateStage(parsed.primaryDiagnosis?.stage) || "intermediate",
           confidence: validateConfidence(parsed.primaryDiagnosis?.confidence) || 0.5,
-          evidenceMarkers: Array.isArray(parsed.primaryDiagnosis?.evidenceMarkers) 
-            ? parsed.primaryDiagnosis.evidenceMarkers 
+          evidenceMarkers: Array.isArray(parsed.primaryDiagnosis?.evidenceMarkers)
+            ? parsed.primaryDiagnosis.evidenceMarkers
             : ["No specific markers identified"]
         },
         riskAssessment: {

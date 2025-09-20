@@ -1,16 +1,7 @@
-export function createMedicalPrompt(imageBase64, symptoms) {
+export function createPrompt(imageBase64, symptoms) {
   let prompt = `You are an advanced AI medical diagnostic system specialized in early disease detection and predictive analytics. Your role is to analyze complex medical data to identify subtle disease patterns that may be invisible to human observation and provide comprehensive diagnostic insights.
 ANALYSIS CONTEXT:
 `;
-
-  if (imageBase64) {
-    prompt += `
-MEDICAL IMAGING DATA: 
-[Base64 Image Data: ${imageBase64.substring(0, 100)}...]
-- Analyze for: Early-stage pathological changes, subtle abnormalities, disease progression markers
-`;
-  }
-
   if (symptoms) {
     prompt += `
 PATIENT CLINICAL PRESENTATION: ${symptoms}
@@ -20,7 +11,7 @@ PATIENT CLINICAL PRESENTATION: ${symptoms}
   }
 
   prompt += `
-DIAGNOSTIC REQUIREMENTS:  
+DIAGNOSTIC REQUIREMENTS:
 1. Provide predictive insights on disease progression timeline
 2. Generate actionable clinical alerts and recommendations
 
@@ -62,7 +53,7 @@ REQUIRED JSON OUTPUT STRUCTURE:
 
 CRITICAL INSTRUCTIONS:
 - Focus on EARLY DETECTION of diseases
-- Provide PREDICTIVE insights, not just current state analysis  
+- Provide PREDICTIVE insights, not just current state analysis
 - Generate ACTIONABLE clinical alerts
 - Consider multi-modal data correlation between imaging and clinical presentation
 - Respond ONLY with valid JSON - no additional text or explanations
