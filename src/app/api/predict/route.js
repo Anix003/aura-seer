@@ -1,7 +1,7 @@
 // Mock API endpoint for testing
 // In a real implementation, this would connect to your MedGemma backend
-
-import { MOCK_DATA } from "@/lib/constants";
+import { createPrompt } from "@/services/createPrompt";
+import { parseResponse } from "@/services/parseResponse";
 
 export async function POST(request) {
   try {
@@ -9,15 +9,39 @@ export async function POST(request) {
     const image = formData.get("image");
     const symptoms = formData.get("symptoms");
 
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    let imageBase64 = null;
+    if (image) {
+      const imageBuffer = await image.arrayBuffer();
+      imageBase64 = Buffer.from(imageBuffer).toString('base64');
+    }
 
-    // Use mock results from constants
-    const result = MOCK_DATA.ANALYSIS_RESULTS[
-      Math.floor(Math.random() * MOCK_DATA.ANALYSIS_RESULTS.length)
-    ];
+    const prompt = createPrompt(imageBase64, symptoms);
+    console.log("Generated Prompt:", prompt);
 
-    return Response.json(result);
+      const response = await fetch('http://localhost:11434/v1/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: "medgemma", // adjust model name as needed
+        prompt: prompt,
+        max_tokens: 1000,
+        temperature: 0.3,
+      })
+    });
+
+    if (!medGemmaResponse.ok) {
+      throw new Error(`MedGemma API error: ${medGemmaResponse.status}`);
+    }
+
+    const medGemmaResult = await medGemmaResponse.json();
+    console.log("MedGemma Response:", medGemmaResult);
+    const structuredOutput = parseResponse(medGemmaResult);
+    console.log("Structured Output:", structuredOutput);
+
+    return Response.json(structuredOutput, { status: 200 });
+
   } catch (error) {
     console.error("API Error:", error);
     return Response.json(
