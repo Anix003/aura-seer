@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
 import { getUserFromCookies } from '@/lib/auth';
@@ -8,7 +9,7 @@ export async function POST(request) {
 
     const userFromToken = await getUserFromCookies();
     if (!userFromToken) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
@@ -16,7 +17,7 @@ export async function POST(request) {
 
     const user = await User.findById(userFromToken.userId);
     if (!user || user.role !== 'patient') {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Only patients can start chats' },
         { status: 403 }
       );
@@ -25,7 +26,7 @@ export async function POST(request) {
     const { specialization } = await request.json();
 
     if (!specialization || specialization.trim() === '') {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Specialization is required' },
         { status: 400 }
       );
@@ -37,7 +38,7 @@ export async function POST(request) {
     }).sort({ createdAt: 1 });
 
     if (!doctor) {
-      return Response.json(
+      return NextResponse.json(
         { error: `No ${specialization} specialist available at the moment. Please try again later.` },
         { status: 404 }
       );
@@ -45,7 +46,7 @@ export async function POST(request) {
 
     const roomId = `${user._id}_${doctor._id}`;
 
-    return Response.json({
+    return NextResponse.json({
       roomId,
       patient: {
         id: user._id,
@@ -63,7 +64,7 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Start chat error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error while starting chat' },
       { status: 500 }
     );

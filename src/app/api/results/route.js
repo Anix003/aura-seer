@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import AnalysisResult from '@/models/AnalysisResult';
 import { getUserFromCookies } from '@/lib/auth';
@@ -8,7 +9,7 @@ export async function GET(request) {
 
     const userFromToken = await getUserFromCookies();
     if (!userFromToken) {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
@@ -28,7 +29,7 @@ export async function GET(request) {
         query['clinicianAction.status'] = status;
       }
     } else {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Invalid user role' },
         { status: 403 }
       );
@@ -49,7 +50,7 @@ export async function GET(request) {
 
     const total = await AnalysisResult.countDocuments(query);
 
-    return Response.json({
+    return NextResponse.json({
       results: results.map(result => ({
         id: result._id,
         inputMeta: result.inputMeta,
@@ -79,7 +80,7 @@ export async function GET(request) {
 
   } catch (error) {
     console.error('Get results error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
