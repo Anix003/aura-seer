@@ -7,11 +7,50 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ScrollArea";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Typewriter component for AI messages
+const TypewriterText = ({ text, onComplete }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 10); // Adjust speed here (lower = faster)
+
+      return () => clearTimeout(timeout);
+    } else if (onComplete) {
+      onComplete();
+    }
+  }, [currentIndex, text, onComplete]);
+
+  useEffect(() => {
+    // Reset when text changes
+    setDisplayedText("");
+    setCurrentIndex(0);
+  }, [text]);
+
+  return (
+    <span>
+      {displayedText}
+      {currentIndex < text.length && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+          className="inline-block w-0.5 h-4 bg-current ml-0.5"
+        />
+      )}
+    </span>
+  );
+};
+
 export default function ChatWithSeer({ result }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [typingMessageId, setTypingMessageId] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -20,19 +59,21 @@ export default function ChatWithSeer({ result }) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, typingMessageId]);
 
   // Initialize chat with context about the diagnosis
   useEffect(() => {
     if (isOpen && messages.length === 0 && result) {
-      setMessages([
-        {
-          id: 1,
-          type: "ai",
-          content: `Hello! I'm Aura Seer, your AI medical assistant. I see you have a diagnosis of "${result.diagnosis}" with ${Math.round(result.confidence * 100)}% confidence. I'm here to help you understand your results, answer questions about the condition, or provide general medical information. How can I assist you today?`,
-          timestamp: new Date()
-        }
-      ]);
+      const initialMessage = {
+        id: 1,
+        type: "ai",
+        content: `Hello! I'm Aura Seer, your AI medical assistant. I see you have a diagnosis of "${result.diagnosis}" with ${Math.round(result.confidence * 100)}% confidence. I'm here to help you understand your results, answer questions about the condition, or provide general medical information. How can I assist you today?`,
+        timestamp: new Date(),
+        isTyping: true
+      };
+      
+      setMessages([initialMessage]);
+      setTypingMessageId(1);
     }
   }, [isOpen, result]);
 
@@ -47,19 +88,32 @@ export default function ChatWithSeer({ result }) {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputMessage;
     setInputMessage("");
     setIsLoading(true);
 
     try {
       // Simulate AI response (replace with actual API call)
       setTimeout(() => {
+        const aiResponseId = Date.now() + 1;
         const aiResponse = {
-          id: Date.now() + 1,
+          id: aiResponseId,
           type: "ai",
-          content: `Thank you for your question about "${inputMessage}". Based on your diagnosis of "${result.diagnosis}" with ${Math.round(result.confidence * 100)}% confidence, I can provide some general information. However, please remember that this is for educational purposes only and you should consult with your healthcare provider for personalized medical advice.`,
-          timestamp: new Date()
+          content: `Thank you for your question about "${currentInput}". Based on your diagnosis of "${result.diagnosis}" with ${Math.round(result.confidence * 100)}% confidence, I can provide some general information. However, please remember that this is for educational purposes only and you should consult with your healthcare provider for personalized medical advice.
+
+For "${result.diagnosis}", here are some key points:
+• This condition may require specific monitoring and care
+• Follow-up appointments with your healthcare provider are important
+• Maintain a healthy lifestyle as recommended by your doctor
+• Don't hesitate to ask if you have more questions about your condition
+
+Is there anything specific about your diagnosis you'd like me to explain further?`,
+          timestamp: new Date(),
+          isTyping: true
         };
+        
         setMessages(prev => [...prev, aiResponse]);
+        setTypingMessageId(aiResponseId);
         setIsLoading(false);
       }, 1500);
     } catch (error) {
@@ -73,6 +127,17 @@ export default function ChatWithSeer({ result }) {
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const handleTypingComplete = (messageId) => {
+    setTypingMessageId(null);
+    setMessages(prev => 
+      prev.map(msg => 
+        msg.id === messageId 
+          ? { ...msg, isTyping: false }
+          : msg
+      )
+    );
   };
 
   // Animation variants
@@ -212,6 +277,20 @@ export default function ChatWithSeer({ result }) {
                     <Bot className="h-5 w-5 text-blue-600" />
                   </motion.div>
                   <h3 className="font-semibold text-gray-900">Aura Seer Assistant</h3>
+                  {typingMessageId && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex items-center space-x-1 text-xs text-blue-600"
+                    >
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                        className="w-1 h-1 bg-blue-600 rounded-full"
+                      />
+                      <span>typing...</span>
+                    </motion.div>
+                  )}
                 </div>
                 <motion.div
                   whileHover={{ scale: 1.1 }}
@@ -254,8 +333,17 @@ export default function ChatWithSeer({ result }) {
                             {message.type === "user" && (
                               <User className="h-4 w-4 mt-0.5 flex-shrink-0" />
                             )}
-                            <div>
-                              <p className="text-sm leading-relaxed">{message.content}</p>
+                            <div className="flex-1">
+                              <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                                {message.type === "ai" && message.isTyping ? (
+                                  <TypewriterText 
+                                    text={message.content}
+                                    onComplete={() => handleTypingComplete(message.id)}
+                                  />
+                                ) : (
+                                  message.content
+                                )}
+                              </div>
                               <p className={`text-xs mt-1 ${
                                 message.type === "user" ? "text-blue-100" : "text-gray-500"
                               }`}>
@@ -312,7 +400,7 @@ export default function ChatWithSeer({ result }) {
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Ask about your diagnosis..."
-                    disabled={isLoading}
+                    disabled={isLoading || typingMessageId !== null}
                     className="flex-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   />
                   <motion.div
@@ -321,7 +409,7 @@ export default function ChatWithSeer({ result }) {
                   >
                     <Button
                       onClick={handleSendMessage}
-                      disabled={!inputMessage.trim() || isLoading}
+                      disabled={!inputMessage.trim() || isLoading || typingMessageId !== null}
                       size="sm"
                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                     >
