@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { Video, MessageCircle, Phone, X } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function TelemedicineButton() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
@@ -24,10 +30,10 @@ export default function TelemedicineButton() {
       <h2 className="text-xl font-semibold text-gray-900 mb-4">
         Consult with Healthcare Professionals
       </h2>
-      
+
       <p className="text-gray-600 mb-6">
-        Connect with certified medical professionals for personalized consultation 
-        and treatment recommendations.
+        Connect with certified medical professionals for personalized
+        consultation and treatment recommendations.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,7 +59,8 @@ export default function TelemedicineButton() {
                   Video consultation interface would be integrated here
                 </p>
                 <p className="text-sm text-gray-500">
-                  Integration with Twilio, Agora, or similar video calling service
+                  Integration with Twilio, Agora, or similar video calling
+                  service
                 </p>
               </div>
             </div>
@@ -79,11 +86,15 @@ export default function TelemedicineButton() {
               <div className="flex-1 bg-gray-50 rounded-lg p-4 mb-4 overflow-y-auto">
                 <div className="space-y-4">
                   <div className="bg-blue-100 rounded-lg p-3 max-w-xs">
-                    <p className="text-sm">Hello! I'm Dr. Smith. How can I help you today?</p>
+                    <p className="text-sm">
+                      Hello! I{"'"}m Dr. Smith. How can I help you today?
+                    </p>
                     <span className="text-xs text-gray-500">2 min ago</span>
                   </div>
                   <div className="bg-white rounded-lg p-3 max-w-xs ml-auto">
-                    <p className="text-sm">I have some questions about my medical scan results.</p>
+                    <p className="text-sm">
+                      I have some questions about my medical scan results.
+                    </p>
                     <span className="text-xs text-gray-500">1 min ago</span>
                   </div>
                 </div>
@@ -105,12 +116,16 @@ export default function TelemedicineButton() {
 
       {/* Quick Contact Options */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <h3 className="text-sm font-medium text-gray-900 mb-3">Quick Contact</h3>
+        <h3 className="text-sm font-medium text-gray-900 mb-3">
+          Quick Contact
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <button className="flex items-center justify-center px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-            <Phone className="h-4 w-4 mr-2" />
-            Emergency: 911
-          </button>
+          <a href="tel:102">
+            <button className="flex items-center justify-center px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+              <Phone className="h-4 w-4 mr-2" />
+              Emergency: 102
+            </button>
+          </a>
           <button className="flex items-center justify-center px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
             <Phone className="h-4 w-4 mr-2" />
             Nurse Hotline
@@ -124,9 +139,9 @@ export default function TelemedicineButton() {
 
       <div className="mt-4 p-3 bg-blue-50 rounded-lg">
         <p className="text-xs text-blue-800">
-          <strong>Available 24/7:</strong> Our telemedicine platform connects you with 
-          licensed healthcare professionals. Response times may vary based on urgency 
-          and availability.
+          <strong>Available 24/7:</strong> Our telemedicine platform connects
+          you with licensed healthcare professionals. Response times may vary
+          based on urgency and availability.
         </p>
       </div>
     </div>
