@@ -18,7 +18,6 @@ export function MedicalProvider({ children }) {
   const [symptoms, setSymptoms] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  // Custom function to clear image and related data
   const clearImageAndResults = () => {
     setUploadedImage(null);
     setAnalysisResult(null);

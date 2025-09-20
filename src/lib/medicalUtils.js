@@ -1,16 +1,10 @@
 import { MEDICAL_CONSTANTS } from "./constants";
 
-/**
- * Validates uploaded medical image file
- * @param {File} file - File to validate
- * @returns {Object} Validation result with isValid and error message
- */
 export function validateMedicalImage(file) {
   if (!file) {
     return { isValid: false, error: "No file provided" };
   }
 
-  // Check file type
   if (!MEDICAL_CONSTANTS.ALLOWED_FILE_TYPES.includes(file.type)) {
     return { 
       isValid: false, 
@@ -18,7 +12,6 @@ export function validateMedicalImage(file) {
     };
   }
 
-  // Check file size
   if (file.size > MEDICAL_CONSTANTS.MAX_FILE_SIZE) {
     return { 
       isValid: false, 
@@ -29,22 +22,12 @@ export function validateMedicalImage(file) {
   return { isValid: true, error: null };
 }
 
-/**
- * Gets confidence level category based on confidence score
- * @param {number} confidence - Confidence score (0-1)
- * @returns {string} Confidence level category
- */
 export function getConfidenceLevel(confidence) {
   if (confidence >= MEDICAL_CONSTANTS.CONFIDENCE_LEVELS.HIGH) return "high";
   if (confidence >= MEDICAL_CONSTANTS.CONFIDENCE_LEVELS.MEDIUM) return "medium";
   return "low";
 }
 
-/**
- * Gets appropriate color for confidence score
- * @param {number} confidence - Confidence score (0-1)
- * @returns {string} CSS color class
- */
 export function getConfidenceColor(confidence) {
   const level = getConfidenceLevel(confidence);
   switch (level) {
@@ -54,11 +37,6 @@ export function getConfidenceColor(confidence) {
   }
 }
 
-/**
- * Formats file size to human readable format
- * @param {number} bytes - File size in bytes
- * @returns {string} Formatted file size
- */
 export function formatFileSize(bytes) {
   if (bytes === 0) return "0 Bytes";
   
@@ -69,32 +47,18 @@ export function formatFileSize(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 
-/**
- * Generates chart data with current analysis result
- * @param {Object} analysisResult - Current analysis result
- * @param {Array} baseData - Base progression data
- * @returns {Array} Updated chart data
- */
 export function generateProgressionData(analysisResult, baseData) {
   if (!analysisResult) return baseData;
   
-  // Create a deep copy of the base data to avoid mutating the original
   const updatedData = baseData.map(entry => ({ ...entry }));
   const lastEntry = updatedData[updatedData.length - 1];
   
-  // Update last entry with current analysis confidence
   lastEntry.risk = Math.round(analysisResult.confidence * 100);
   lastEntry.severity = Math.round(analysisResult.confidence * 80);
   
   return updatedData;
 }
 
-/**
- * Debounce function for input handling
- * @param {Function} func - Function to debounce
- * @param {number} wait - Wait time in milliseconds
- * @returns {Function} Debounced function
- */
 export function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {

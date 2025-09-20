@@ -1,21 +1,16 @@
-// Constants for medical analysis
 export const MEDICAL_CONSTANTS = {
-  // File upload constraints
-  MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
+  MAX_FILE_SIZE: 5 * 1024 * 1024,
   ALLOWED_FILE_TYPES: ["image/jpeg", "image/jpg", "image/png"],
   
-  // Confidence thresholds
   CONFIDENCE_LEVELS: {
     HIGH: 0.8,
     MEDIUM: 0.6,
     LOW: 0.4,
   },
   
-  // Chart data defaults
   DEFAULT_PROGRESSION_MONTHS: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
   DEFAULT_TREATMENT_WEEKS: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
   
-  // UI Messages
   MESSAGES: {
     NO_IMAGE: "Please upload a medical image first.",
     ANALYSIS_SUCCESS: "Analysis completed successfully!",
@@ -25,7 +20,6 @@ export const MEDICAL_CONSTANTS = {
     UPLOAD_PROMPT: "Upload a medical image and click 'Analyze' to see AI-powered diagnosis and recommendations.",
   },
   
-  // Query keys for React Query
   QUERY_KEYS: {
     PATIENT_HISTORY: "patientHistory",
     ANALYSIS_RESULTS: "analysisResults",
@@ -33,7 +27,6 @@ export const MEDICAL_CONSTANTS = {
   },
 };
 
-// Mock data for development and testing
 export const MOCK_DATA = {
   PROGRESSION_DATA: [
     { month: "Jan", risk: 15, severity: 10 },
